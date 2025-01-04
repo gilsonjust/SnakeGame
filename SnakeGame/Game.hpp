@@ -17,6 +17,9 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+/* Windows dll added to play a sound when Snake eats food */
+#pragma comment(lib, "winmm.lib")
+
 class Game
 {
 public:
@@ -45,6 +48,8 @@ private:
 	char getDirectionAsChar(const char dir) const;
 	void setGameStatus(const GameStatus s);
 	void incrementSnake(Coord c);
+	void playSoundForFood();
+	void playSoundForDead();
 	Coord* getSnakeHead();
 private:
 	unsigned int m_points;

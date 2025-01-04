@@ -110,6 +110,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,6 +141,10 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="mapSymbols.hpp" />
     <ClInclude Include="Util.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="wav\dead.wav" />
+    <Media Include="wav\eat.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

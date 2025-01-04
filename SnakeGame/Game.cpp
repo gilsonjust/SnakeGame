@@ -203,12 +203,14 @@ void Game::updateGameStatus()
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
+		playSoundForDead();
 	}
 
 	if (checkIfSnakeBitesItself(head))
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
+		playSoundForDead();
 	}
 
 	if (checkIfSankeEatFood(head, &m_foodPos))
@@ -220,6 +222,8 @@ void Game::updateGameStatus()
 		placeFood();
 
 		m_points++;
+
+		playSoundForFood();
 
 		if (m_points >= GamePoints::WIN_GAME)
 			setGameStatus(GameStatus::WINGAME);
@@ -370,6 +374,16 @@ void Game::setGameStatus(const GameStatus s)
 void Game::incrementSnake(Coord c)
 {
 	m_snake.push_back(c);
+}
+
+void Game::playSoundForFood()
+{
+	PlaySound(TEXT("wav/eat.wav"), NULL, SND_FILENAME | SND_ASYNC);
+}
+
+void Game::playSoundForDead()
+{
+	PlaySound(TEXT("wav/dead.wav"), NULL, SND_FILENAME | SND_ASYNC);
 }
 
 Coord* Game::getSnakeHead()
