@@ -7,9 +7,11 @@ Game::Game()
 	log.clearScreen();
 	initializeRandomSeed();
 	setGameStatus(GameStatus::RUNNING);
+	setLevelUp(false);
 
 	m_snakeCurrentDir = CHAR_INIT;
-	m_points = GamePoints::MIN;
+	m_points = GamePoints::LEVEL_0;
+	m_gameLevel = GameLevel::LEVEL_0;
 
 	/* Set the snake on center of the map */
 	Coord snakeHead = { MapSize::MAX_X / 2, MapSize::MAX_Y / 2 };
@@ -72,31 +74,81 @@ GameStatus Game::checkGameStatus() const
 	return m_status;
 }
 
-int Game::getSpeedGameMs() const
+int Game::getSpeedGameMs() 
 {
-	if (m_points >= GamePoints::MIN && m_points < GamePoints::LEVEL_A)
+	/* Level 0 - refresh every 300ms */
+	if (m_points < GamePoints::LEVEL_1)
+	{
+		m_gameLevel = GameLevel::LEVEL_0;
 		return Pause::p300ms;
+	}
 
-	if (m_points >= GamePoints::LEVEL_A && m_points < GamePoints::LEVEL_B)
+	/* Level 1 - refresh every 250ms  */
+	if (m_points >= GamePoints::LEVEL_1 && m_points < GamePoints::LEVEL_2)
+	{
+		if (m_gameLevel < GameLevel::LEVEL_1)
+		{
+			m_levelUp = true;
+			m_gameLevel = GameLevel::LEVEL_1;
+		}
+		
 		return Pause::p250ms;
+	}
 
-	if (m_points >= GamePoints::LEVEL_B && m_points < GamePoints::LEVEL_C)
+	/* Level 2 - refresh every 200ms  */
+	if (m_points >= GamePoints::LEVEL_2 && m_points < GamePoints::LEVEL_3)
+	{
+		if (m_gameLevel < GameLevel::LEVEL_2)
+		{
+			m_levelUp = true;
+			m_gameLevel = GameLevel::LEVEL_2;
+		}
+		
 		return Pause::p200ms;
+	}
 
-	if (m_points >= GamePoints::LEVEL_C && m_points < GamePoints::LEVEL_D)
+	/* Level 3 - refresh every 150ms */
+	if (m_points >= GamePoints::LEVEL_3 && m_points < GamePoints::LEVEL_4)
+	{
+		if (m_gameLevel < GameLevel::LEVEL_3)
+		{
+			m_levelUp = true;
+			m_gameLevel = GameLevel::LEVEL_3;
+		}
+		
 		return Pause::p150ms;
+	}
 
-	if (m_points >= GamePoints::LEVEL_D && m_points < GamePoints::LEVEL_MAX)
+	/* Level 4 - refresh every 100ms  */
+	if (m_points >= GamePoints::LEVEL_4 && m_points < GamePoints::LEVEL_5)
+	{
+		if (m_gameLevel < GameLevel::LEVEL_4)
+		{
+			m_levelUp = true;
+			m_gameLevel = GameLevel::LEVEL_4;
+		}
+		
 		return Pause::p100ms;
+	}
 
-	if (m_points >= GamePoints::LEVEL_MAX)
+	/* Level 5 - refresh every 75ms  */
+	if (m_points >= GamePoints::LEVEL_5)
+	{
+		if (m_gameLevel < GameLevel::LEVEL_5)
+		{
+			m_levelUp = true;
+			m_gameLevel = GameLevel::LEVEL_5;
+		}
+		
 		return Pause::p75ms;
+	}
 
 	return Pause::p300ms;
 }
 
 void Game::printMap() const
 {
+	/* Output is always fully sent to stringstream and log out to terminal */
 	std::stringstream ss;
 
 	/* Draw the map and stuff on it */
@@ -203,14 +255,14 @@ void Game::updateGameStatus()
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
-		playSoundForDead();
+		sounds.playSoundGameOver();
 	}
 
 	if (checkIfSnakeBitesItself(head))
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
-		playSoundForDead();
+		sounds.playSoundGameOver();
 	}
 
 	if (checkIfSankeEatFood(head, &m_foodPos))
@@ -223,7 +275,14 @@ void Game::updateGameStatus()
 
 		m_points++;
 
-		playSoundForFood();
+		/* Controls to play levelUp sound instead of eatFood sound when enter new level */
+		if (getLevelUp())
+		{
+			sounds.playSoundLevelUp();
+			setLevelUp(false);
+		}
+		else
+			sounds.playSoundEatFood();
 
 		if (m_points >= GamePoints::WIN_GAME)
 			setGameStatus(GameStatus::WINGAME);
@@ -335,12 +394,13 @@ Coord Game::getRandomEmptyCoord()
 
 void Game::printGameInfo()
 {
+	/* Output is always fully sent to stringstream and log out to terminal */
 	std::stringstream ss;
 
 	ss << "--------------------------------------------- SNAKE GAME ---------------------------------------------" << CRLF;
 	ss << "        Use the ARROW KEYS to control the snake, SPACEBAR to Pause or press ESC to exit the game	     " << CRLF;
 	ss << "------------------------------------------------------------------------------------------------------" << CRLF;
-	ss << TAB << " Snake Size: " << FORMAT_2_DIGITS << m_snake.size() << " | Points: " << FORMAT_2_DIGITS << m_points
+	ss << TAB << " Game Level: " << FORMAT_2_DIGITS << m_gameLevel << " | Points: " << FORMAT_2_DIGITS << m_points
 			  << " | Snake Coord: (" << FORMAT_2_DIGITS << m_snake[0].X << "," << FORMAT_2_DIGITS << m_snake[0].Y << ")"
 			  << " | Map Size: " << MapSize::MAX_X << "x" << MapSize::MAX_Y << " | Direction: " << getDirectionAsChar(m_snakeCurrentDir) << CRLF;
 	ss << "------------------------------------------------------------------------------------------------------" << CRLF;
@@ -376,18 +436,17 @@ void Game::incrementSnake(Coord c)
 	m_snake.push_back(c);
 }
 
-void Game::playSoundForFood()
-{
-	PlaySound(TEXT("wav/food.wav"), NULL, SND_FILENAME | SND_ASYNC);
-}
-
-void Game::playSoundForDead()
-{
-	PlaySound(TEXT("wav/dead.wav"), NULL, SND_FILENAME | SND_ASYNC);
-}
-
 Coord* Game::getSnakeHead()
 {
 	return &m_snake[0];
 }
 
+void Game::setLevelUp(bool l)
+{
+	m_levelUp = l;
+}
+
+bool Game::getLevelUp()
+{
+	return m_levelUp;
+}

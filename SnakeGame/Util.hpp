@@ -48,11 +48,21 @@ struct Pause
 /* Game Points for each eaten food - it is used to set the Pause */
 struct GamePoints
 {
-	static const unsigned int MIN = 0;
-	static const unsigned int LEVEL_A = 3;
-	static const unsigned int LEVEL_B = 6;
-	static const unsigned int LEVEL_C = 12;
-	static const unsigned int LEVEL_D = 24;
-	static const unsigned int LEVEL_MAX = 48;
+	static const unsigned int LEVEL_0 = 0;
+	static const unsigned int LEVEL_1 = 3;
+	static const unsigned int LEVEL_2 = 6;
+	static const unsigned int LEVEL_3 = 12;
+	static const unsigned int LEVEL_4 = 24;
+	static const unsigned int LEVEL_5 = 48;
 	static const unsigned int WIN_GAME = 64;
+};
+
+struct GameLevel
+{
+	static const unsigned int LEVEL_0 = 0;
+	static const unsigned int LEVEL_1 = 1;
+	static const unsigned int LEVEL_2 = 2;
+	static const unsigned int LEVEL_3 = 3;
+	static const unsigned int LEVEL_4 = 4;
+	static const unsigned int LEVEL_5 = 5;
 };
