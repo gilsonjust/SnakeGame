@@ -79,6 +79,7 @@ static void captureInput(Game* g)
     }
 }
 
+
 /* Reset pressed key */
 static void resetPressedKey()
 {
