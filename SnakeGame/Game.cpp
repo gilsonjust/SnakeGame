@@ -255,14 +255,18 @@ void Game::updateGameStatus()
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
+#if SOUND_ENABLED
 		sounds.playSoundGameOver();
+#endif
 	}
 
 	if (checkIfSnakeBitesItself(head))
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
+#if SOUND_ENABLED
 		sounds.playSoundGameOver();
+#endif
 	}
 
 	if (checkIfSankeEatFood(head, &m_foodPos))
@@ -275,6 +279,7 @@ void Game::updateGameStatus()
 
 		m_points++;
 
+#if SOUND_ENABLED
 		/* Controls to play levelUp sound instead of eatFood sound when enter new level */
 		if (getLevelUp())
 		{
@@ -283,7 +288,7 @@ void Game::updateGameStatus()
 		}
 		else
 			sounds.playSoundEatFood();
-
+#endif
 		if (m_points >= GamePoints::WIN_GAME)
 			setGameStatus(GameStatus::WINGAME);
 	}

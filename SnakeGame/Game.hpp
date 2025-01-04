@@ -18,6 +18,9 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+/* Set it to 1 to enable game sounds */
+#define SOUND_ENABLED 0
+
 class Game
 {
 public:
@@ -58,6 +61,8 @@ private:
 	Coord m_foodPos;
 	vector<Coord> m_snake;
 	mapData m_map[MapSize::MAX_X][MapSize::MAX_Y];
+#if SOUND_ENABLED
 	GameSounds sounds;
+#endif
 	mutable Logger log;
 };

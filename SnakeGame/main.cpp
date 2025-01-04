@@ -20,28 +20,22 @@ static void resetPressedKey();
 
 int main()
 {
-    bool option = TRUE;
+    bool keepPlaying = TRUE;
 
-    while (option)
+    while (keepPlaying)
     {
         Game game;
-        bool pausedGame = false;
+        char key = CHAR_INIT;
 
         /* Create a thead to capture data from keyboard */
         std::thread inputThread(captureInput, &game);
 
         /* Run the game, update the snake directions and refresh map */
-        while (pressedKey.load() != Keys::ESC)
+        while (key != Keys::ESC)
         {
-            /* Pause game if press SPACEBAR - useful for debugging */
-            if (pressedKey.load() == Keys::SPACEBAR)
-            {
-                resetPressedKey();
-                pausedGame = !pausedGame;
-            }
+            key = pressedKey.load();
 
-            if(!pausedGame)
-                game.refreshGame(pressedKey.load());
+            game.refreshGame(key);
 
             /* if Snake hits something like walls or bite itself, finish the game */
             if (game.checkGameStatus() != GameStatus::RUNNING)
@@ -53,7 +47,8 @@ int main()
 
         inputThread.join();
 
-        option = playAgain(game.checkGameStatus());
+        /* Get input from keyboard to play again (or not) */
+        keepPlaying = playAgain(game.checkGameStatus());
     }
 
     return EXIT_SUCCESS;
