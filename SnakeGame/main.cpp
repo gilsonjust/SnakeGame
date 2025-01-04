@@ -8,6 +8,7 @@
 
 /*
     Send review to Cherno: chernoreview@gmail.com
+    hahaha it is working !
 */
 
 /* Thread safe operations variable to store and retrieve values */
@@ -78,6 +79,7 @@ static void captureInput(Game* g)
         }
     }
 }
+
 
 /* Reset pressed key */
 static void resetPressedKey()
