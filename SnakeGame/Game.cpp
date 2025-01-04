@@ -378,7 +378,7 @@ void Game::incrementSnake(Coord c)
 
 void Game::playSoundForFood()
 {
-	PlaySound(TEXT("wav/eat.wav"), NULL, SND_FILENAME | SND_ASYNC);
+	PlaySound(TEXT("wav/food.wav"), NULL, SND_FILENAME | SND_ASYNC);
 }
 
 void Game::playSoundForDead()
