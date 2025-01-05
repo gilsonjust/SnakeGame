@@ -237,7 +237,7 @@ snakeDir Game::fixSnakeDirection(const snakeDir newDir)
 	return m_snakeCurrentDir;
 }
 
-mapData Game::getMapTypeFromCoord(const Coord* c) const
+mapData Game::getMapDataFromCoord(const Coord* c) const
 {
 	return m_map[c->X][c->Y];
 }
@@ -251,7 +251,7 @@ void Game::updateGameStatus()
 {
 	Coord* head = getSnakeHead();
 
-	if (!checkIfSnakeHitsTheWall(head))
+	if (checkIfSnakeHitsTheWall(head))
 	{
 		updateMap(head, MapData::SNAKE_HEAD_DEAD);
 		setGameStatus(GameStatus::ENDGAME);
@@ -351,14 +351,16 @@ bool Game::isCoordEmpty(const Coord* c) const
 	return (m_map[c->X][c->Y] == MapData::EMPTY);
 }
 
-bool Game::checkIfSnakeHitsTheWall(const Coord* c) const
+bool Game::checkIfSnakeHitsTheWall(const Coord* snakeHead) const
 {
-	return isValidCoord(c);
+	/* Snake (head) can only hit horizontal or vertical walls - makes not sense to compare with top/botton/left/right corners */
+	// return (getMapDataFromCoord(snakeHead) == MapData::H_WALL || getMapDataFromCoord(snakeHead) == MapData::V_WALL);
+	return !isValidCoord(snakeHead);
 }
 
-bool Game::checkIfSnakeBitesItself(const Coord* c) const
+bool Game::checkIfSnakeBitesItself(const Coord* snakeHead) const
 {
-	return (getMapTypeFromCoord(c) == MapData::SNAKE_BODY);
+	return (getMapDataFromCoord(snakeHead) == MapData::SNAKE_BODY);
 }
 
 bool Game::checkIfSankeEatFood(const Coord* snakeHead, const Coord* food) const

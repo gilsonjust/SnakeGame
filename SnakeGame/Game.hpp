@@ -30,7 +30,7 @@ public:
 	int getSpeedGameMs();
 private:
 	snakeDir fixSnakeDirection(const snakeDir newDir);
-	mapData getMapTypeFromCoord(const Coord* c) const;
+	mapData getMapDataFromCoord(const Coord* c) const;
 	Coord getSnakeLastBodyCoord() const;
 	Coord getRandomEmptyCoord();
 	Coord* getSnakeHead();

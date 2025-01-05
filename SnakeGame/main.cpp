@@ -21,37 +21,47 @@ static void resetPressedKey();
 int main()
 {
     bool keepPlaying = TRUE;
+    char key = CHAR_INIT;
 
     while (keepPlaying)
     {
         Game game;
-        char key = CHAR_INIT;
 
-        /* Create a thead to capture data from keyboard */
+        /* Capture inputs from Keyboard */
         std::thread inputThread(captureInput, &game);
 
-        /* Run the game, update the snake directions and refresh map */
-        while (key != Keys::ESC)
-        {
-            key = pressedKey.load();
-
-            game.refreshGame(key);
-
-            /* if Snake hits something like walls or bite itself, finish the game */
-            if (game.checkGameStatus() != GameStatus::RUNNING)
-                break;
-
-            /* Sleep time - defines game speed */
-            pauseMilliSeconds(game.getSpeedGameMs());
-        }
+        /* Refresh game and move snake */
+        std::thread gameThread(runGame, &game);
 
         inputThread.join();
+        gameThread.join();
 
         /* Get input from keyboard to play again (or not) */
         keepPlaying = playAgain(game.checkGameStatus());
     }
 
     return EXIT_SUCCESS;
+}
+
+/* Thread refresh the game  */
+static void runGame(Game* g)
+{
+    char key = CHAR_INIT;
+
+    /* Run the game, update the snake directions and refresh map */
+    while (key != Keys::ESC)
+    {
+        key = pressedKey.load();
+
+        g->refreshGame(key);
+
+        /* if Snake hits something like walls or bite itself, finish the game */
+        if (g->checkGameStatus() != GameStatus::RUNNING)
+            break;
+
+        /* Sleep time - defines game speed */
+        pauseMilliSeconds(g->getSpeedGameMs());
+    }
 }
 
 /* Thread for keyboard input does not be affected by refresh game pause */
